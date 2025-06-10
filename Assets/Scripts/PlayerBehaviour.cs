@@ -5,7 +5,15 @@ public class PlayerBehaviour : MonoBehaviour
     int score = 0;
     int health = 100;
     DoorBehaviour doorBehaviour;
+    CollectibleBehaviour collectibleBehaviour;
     bool canInteract = false;
+
+    public void ModifyScore(int amount)
+    {
+        // This method will be called to modify the player's score
+        score += amount;
+        Debug.Log("Score: " + score);
+    }
     void OnInteract()
     {
         // This method will be called when the player interacts with an object
@@ -16,22 +24,66 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 doorBehaviour.Interact();
             }
+            else if (collectibleBehaviour != null)
+            {
+                collectibleBehaviour.Collect(this);
+            }
+            else
+            {
+                Debug.Log("No interactable object found.");
+            }
         }
     }
     void OnCollisionEnter(Collision collision)
     {
         // This method will be called when the player collides with another object
         Debug.Log("Player collided with " + collision.gameObject.name);
-        if (collision.gameObject.CompareTag("Door"))
-        {
-            doorBehaviour = collision.gameObject.GetComponent<DoorBehaviour>();
-            canInteract = true;
-        }
-        else if (collision.gameObject.CompareTag("Collectible"))
+        if (collision.gameObject.CompareTag("Collectible"))
         {
             score += 10;
-            Debug.Log("Collected: " + gameObject.name);
+            Debug.Log("Collected: " + collision.gameObject.name);
+            Debug.Log("Score: " + score);
             Destroy(collision.gameObject);
+        }
+        else if (collision.gameObject.CompareTag("Hazard"))
+        {
+            score -= 5;
+            Debug.Log("Hit a hazard: " + gameObject.name);
+            health -= 10;
+            Debug.Log("Health: " + health);
+            Debug.Log("Score: " + score);
+            Destroy(collision.gameObject);
+            if (health <= 0)
+            {
+                Debug.Log("Player is dead.");
+                // Handle player death (e.g., respawn, game over)
+                Destroy(gameObject); // For simplicity, destroy the player object
+            }
+        }
+
+    }
+    void OnTriggerEnter(Collider other)
+    {
+        // This method will be called when the player enters a trigger collider
+        Debug.Log(other.gameObject.name + " entered trigger");
+        if (other.gameObject.CompareTag("Collectible"))
+        {
+            collectibleBehaviour = other.gameObject.GetComponent<CollectibleBehaviour>();
+            canInteract = true;
+            collectibleBehaviour.Highlight();
+        }
+        else if (other.gameObject.CompareTag("Door"))
+        {
+            doorBehaviour = other.gameObject.GetComponent<DoorBehaviour>();
+            canInteract = true;
+        }
+        else if (other.gameObject.CompareTag("Killer"))
+        {
+            Debug.Log("Player hit a killer object: " + gameObject.name);
+            health = 0; // Set health to 0 to simulate death
+            Debug.Log("Health: " + health);
+            Debug.Log("Score: " + score);
+            Destroy(gameObject); // For simplicity, destroy the player object
         }
     }
 }
