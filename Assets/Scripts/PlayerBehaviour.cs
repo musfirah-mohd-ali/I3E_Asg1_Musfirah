@@ -110,6 +110,7 @@ public class PlayerBehaviour : MonoBehaviour
         else if (other.gameObject.CompareTag("healingArea"))
         {
             health += 3;
+            Debug.Log("Player entered healing area. Health: " + health);
             if (health >= 100)
             {
                 health = 100; // Cap health at 100
@@ -146,12 +147,6 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 doorBehaviour = hitInfo.collider.GetComponent<DoorBehaviour>();
                 canInteract = true;
-            }
-            else
-            {
-                canInteract = false; // Reset interaction if not a collectible or door
-                collectibleBehaviour = null;
-                doorBehaviour = null;
             }
         }
     }
