@@ -17,7 +17,7 @@ public class PlayerBehaviour : MonoBehaviour
     void OnInteract()
     {
         // This method will be called when the player interacts with an object
-        Debug.Log("Player interacted " + gameObject.name);
+        // Debug.Log("Player interacted " + gameObject.name);
         if (canInteract)
         {
             if (doorBehaviour != null)
@@ -28,16 +28,12 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 collectibleBehaviour.Collect(this);
             }
-            else
-            {
-                Debug.Log("No interactable object found.");
-            }
         }
     }
     void OnCollisionEnter(Collision collision)
     {
         // This method will be called when the player collides with another object
-        Debug.Log("Player collided with " + collision.gameObject.name);
+        // Debug.Log("Player collided with " + collision.gameObject.name);
         if (collision.gameObject.CompareTag("Collectible"))
         {
             score += 10;
@@ -65,12 +61,11 @@ public class PlayerBehaviour : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         // This method will be called when the player enters a trigger collider
-        Debug.Log(other.gameObject.name + " entered trigger");
+        // Debug.Log(other.gameObject.name + " entered trigger");
         if (other.gameObject.CompareTag("Collectible"))
         {
             collectibleBehaviour = other.gameObject.GetComponent<CollectibleBehaviour>();
             canInteract = true;
-            collectibleBehaviour.Highlight();
         }
         else if (other.gameObject.CompareTag("Door"))
         {
@@ -84,6 +79,15 @@ public class PlayerBehaviour : MonoBehaviour
             Debug.Log("Health: " + health);
             Debug.Log("Score: " + score);
             Destroy(gameObject); // For simplicity, destroy the player object
+        }
+        else if (other.gameObject.CompareTag("healingArea"))
+        {
+            health += 5; // Heal the player by 20 points
+            if (health > 100)
+            {
+                health = 100; // Cap health at 100
+                Debug.Log("Player healed. Health: " + health);
+            }
         }
     }
 }
