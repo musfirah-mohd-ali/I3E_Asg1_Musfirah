@@ -41,6 +41,15 @@ public class PlayerBehaviour : MonoBehaviour
             Debug.Log("Score: " + score);
             Destroy(collision.gameObject);
         }
+        else if (collision.gameObject.CompareTag("hazardItems"))
+        {
+            score -= 5;
+            Debug.Log("Hit a hazard item: " + collision.gameObject.name);
+            health -= 10;
+            Debug.Log("Health: " + health);
+            Debug.Log("Score: " + score);
+            Destroy(collision.gameObject); // Destroy the hazard item
+        }
         else if (collision.gameObject.CompareTag("Hazard"))
         {
             score -= 5;
@@ -48,7 +57,6 @@ public class PlayerBehaviour : MonoBehaviour
             health -= 10;
             Debug.Log("Health: " + health);
             Debug.Log("Score: " + score);
-            Destroy(collision.gameObject);
             if (health <= 0)
             {
                 Debug.Log("Player is dead.");
@@ -82,7 +90,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("healingArea"))
         {
-            health += 5; // Heal the player by 20 points
+            health += 3;
             if (health > 100)
             {
                 health = 100; // Cap health at 100
