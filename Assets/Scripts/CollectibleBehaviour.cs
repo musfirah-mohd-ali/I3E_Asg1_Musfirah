@@ -7,6 +7,5 @@ public class CollectibleBehaviour : MonoBehaviour
     public void Collect(PlayerBehaviour player)
     {
         player.ModifyScore(collectibleValue); //add the coin's value to the player's score
-        Destroy(gameObject); //destroy the coin
     }
 }

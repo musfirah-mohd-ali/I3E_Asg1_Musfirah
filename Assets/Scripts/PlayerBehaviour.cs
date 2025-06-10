@@ -7,7 +7,16 @@ public class PlayerBehaviour : MonoBehaviour
     DoorBehaviour doorBehaviour;
     CollectibleBehaviour collectibleBehaviour;
     bool canInteract = false;
-
+    [SerializeField]
+    GameObject projectile; // The projectile prefab to be instantiated
+    [SerializeField]
+    float fireStrength = 1000f; // The strength of the fireball
+    [SerializeField]
+    Transform spawnPosition; // The position where the player will spawn
+    [SerializeField]
+    Transform spawnPoint; // The projectile prefab to be instantiated
+    [SerializeField]
+    float interactionDistance = 5f; // the distance at which the player can interact with objects
     public void ModifyScore(int amount)
     {
         // This method will be called to modify the player's score
@@ -17,11 +26,13 @@ public class PlayerBehaviour : MonoBehaviour
     void OnInteract()
     {
         // This method will be called when the player interacts with an object
-        // Debug.Log("Player interacted " + gameObject.name);
+        Debug.Log("Player interacted " + gameObject.name);
         if (canInteract)
         {
             if (doorBehaviour != null)
             {
+                Debug.Log("Interacting with door: " + gameObject.name);
+                // Call the Interact method on the doorBehaviour component
                 doorBehaviour.Interact();
             }
             else if (collectibleBehaviour != null)
@@ -49,6 +60,10 @@ public class PlayerBehaviour : MonoBehaviour
             Debug.Log("Health: " + health);
             Debug.Log("Score: " + score);
             Destroy(collision.gameObject); // Destroy the hazard item
+            if (score <= 0)
+            {
+                score = 0; // Ensure score doesn't go negative
+            }
         }
         else if (collision.gameObject.CompareTag("Hazard"))
         {
@@ -56,12 +71,16 @@ public class PlayerBehaviour : MonoBehaviour
             Debug.Log("Hit a hazard: " + gameObject.name);
             health -= 10;
             Debug.Log("Health: " + health);
-            Debug.Log("Score: " + score);
+            if (score <= 0)
+            {
+                score = 0; // Ensure score doesn't go negative
+            }
             if (health <= 0)
             {
                 Debug.Log("Player is dead.");
+                HandleDeathAndRespawn();
                 // Handle player death (e.g., respawn, game over)
-                Destroy(gameObject); // For simplicity, destroy the player object
+                // For simplicity, destroy the player object
             }
         }
 
@@ -86,15 +105,53 @@ public class PlayerBehaviour : MonoBehaviour
             health = 0; // Set health to 0 to simulate death
             Debug.Log("Health: " + health);
             Debug.Log("Score: " + score);
-            Destroy(gameObject); // For simplicity, destroy the player object
+            HandleDeathAndRespawn(); // For simplicity, destroy the player object
         }
         else if (other.gameObject.CompareTag("healingArea"))
         {
             health += 3;
-            if (health > 100)
+            if (health >= 100)
             {
                 health = 100; // Cap health at 100
                 Debug.Log("Player healed. Health: " + health);
+            }
+        }
+    }
+    void HandleDeathAndRespawn()
+    {
+        health = 100;
+        score = 0;
+        transform.position = spawnPosition.position; // Reset player position    
+        Physics.SyncTransforms(); // Ensure the physics engine updates the player's position and rotation
+        Debug.Log("Respawned at: " + spawnPosition.position);
+    }
+    void OnFire()
+    {
+        GameObject fireball = Instantiate(projectile, spawnPoint.position, spawnPoint.rotation);
+        Vector3 fireDirection = spawnPoint.forward * fireStrength; // Get the forward direction of the spawn point
+        fireball.GetComponent<Rigidbody>().AddForce(fireDirection); // Add force to the fireball
+    }
+    void Update()
+    {
+        RaycastHit hitInfo;
+        Debug.DrawRay(spawnPoint.position, spawnPoint.forward * interactionDistance, Color.yellow);
+        if (Physics.Raycast(spawnPoint.position, spawnPoint.forward, out hitInfo, interactionDistance))
+        {
+            if (hitInfo.collider.CompareTag("Collectible"))
+            {
+                collectibleBehaviour = hitInfo.collider.GetComponent<CollectibleBehaviour>();
+                canInteract = true;
+            }
+            else if (hitInfo.collider.CompareTag("Door"))
+            {
+                doorBehaviour = hitInfo.collider.GetComponent<DoorBehaviour>();
+                canInteract = true;
+            }
+            else
+            {
+                canInteract = false; // Reset interaction if not a collectible or door
+                collectibleBehaviour = null;
+                doorBehaviour = null;
             }
         }
     }

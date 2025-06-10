@@ -42,9 +42,18 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Fire",
+                    "type": "Button",
+                    "id": "1c69e017-1b36-4344-9a63-a9ffa8554e2e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Interact",
                     "type": "Button",
-                    "id": "1a0a33b0-7c9e-4953-8e3d-1c0e4f929f07",
+                    "id": "e43c1344-1e1e-4e56-a1d1-f7a5ee332d94",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -230,7 +239,18 @@
                 },
                 {
                     "name": "",
-                    "id": "3e9aaa35-ec50-401c-ab9d-f6fcdb2392c4",
+                    "id": "67953586-dfa3-4f2b-bbe6-3fab34084660",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5e92734c-1ddd-4588-8767-fa51b74295f9",
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
