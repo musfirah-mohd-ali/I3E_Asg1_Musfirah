@@ -7,6 +7,9 @@ public class PlayerBehaviour : MonoBehaviour
     DoorBehaviour doorBehaviour;
     CollectibleBehaviour collectibleBehaviour;
     bool canInteract = false;
+    public bool HasSpinKey = false;
+    SpinKeySocket currentSpinKeySocket;
+
     [SerializeField]
     GameObject projectile; // The projectile prefab to be instantiated
     [SerializeField]
@@ -38,6 +41,16 @@ public class PlayerBehaviour : MonoBehaviour
             else if (collectibleBehaviour != null)
             {
                 collectibleBehaviour.Collect(this);
+                if (collectibleBehaviour.gameObject.name == "SpinKey")
+                {
+                    HasSpinKey = true; // Set the flag to true if the collectible is a SpinKey
+                    Debug.Log("SpinKey collected! HasSpinKey: " + HasSpinKey);
+                }
+            }
+            else if (currentSpinKeySocket != null)
+            {
+                currentSpinKeySocket.TryUseKey(); // Call the method to use the SpinKey
+                return; // Exit the method after using the SpinKey
             }
         }
     }
@@ -69,6 +82,7 @@ public class PlayerBehaviour : MonoBehaviour
             if (score <= 0)
             {
                 score = 0; // Ensure score doesn't go negative
+                HandleDeathAndRespawn(); // Handle player death (e.g., respawn, game over)
             }
         }
         else if (collision.gameObject.CompareTag("Hazard"))
@@ -89,6 +103,11 @@ public class PlayerBehaviour : MonoBehaviour
                 // For simplicity, destroy the player object
             }
         }
+        else if (collision.gameObject.CompareTag("giftBox"))
+        {
+            Debug.Log("Touched a gift box. No damage taken.");
+        }
+
 
     }
     void OnTriggerEnter(Collider other)
@@ -123,6 +142,40 @@ public class PlayerBehaviour : MonoBehaviour
                 Debug.Log("Player healed. Health: " + health);
             }
         }
+        else if (other.CompareTag("SpinKeySocket"))
+        {
+            SpinKeySocket socket = other.GetComponent<SpinKeySocket>();
+            if (socket != null)
+            {
+                SetSpinKeySocket(socket); // Set the current SpinKeySocket
+            }
+        }
+        else if (other.gameObject.CompareTag("SpinKey"))
+        {
+            HasSpinKey = true;
+            Debug.Log("Collected SpinKey! HasSpinKey: " + HasSpinKey);
+            Destroy(other.gameObject);
+        }
+
+    }
+    void OnTriggerExit(Collider other)
+    {
+        if(other.CompareTag("SpinKeySocket"))
+        {
+            SpinKeySocket socket = other.GetComponent<SpinKeySocket>();
+            if (socket != null)
+            {
+                ClearSpinKeySocket(socket); // Clear the current SpinKeySocket
+            }
+        }
+    }
+    void ClearSpinKeySocket(SpinKeySocket socket)
+    {
+        if (currentSpinKeySocket == socket)
+        {
+            currentSpinKeySocket = null; // Clear the current SpinKeySocket
+            Debug.Log("SpinKeySocket cleared.");
+        }
     }
     void HandleDeathAndRespawn()
     {
@@ -156,4 +209,10 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
     }
+    public void SetSpinKeySocket(SpinKeySocket socket)
+    {
+        currentSpinKeySocket = socket;
+        Debug.Log("SpinKeySocket set.");
+    }
+
 }

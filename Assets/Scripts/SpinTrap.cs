@@ -2,11 +2,20 @@ using UnityEngine;
 
 public class SpinTrap : MonoBehaviour
 {
-    [SerializeField]
-    float spinSpeed = 180f; // degrees per second
+    public float spinSpeed = 180f;
+    bool isSpinning = true;
 
     void Update()
     {
-        transform.Rotate(0, 0, spinSpeed * Time.deltaTime);
+        if (isSpinning)
+        {
+            transform.Rotate(0, 0, spinSpeed * Time.deltaTime);
+        }
+    }
+
+    public void StopSpinning()
+    {
+        isSpinning = false;
+        Debug.Log("Spin trap stopped!");
     }
 }

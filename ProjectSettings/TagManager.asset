@@ -12,7 +12,9 @@ TagManager:
   - healingArea
   - hazardItems
   - Projectile
-  - Pushable
+  - DecoyHazard
+  - SpinKeySocket
+  - giftBox
   layers:
   - Default
   - TransparentFX

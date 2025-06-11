@@ -18,7 +18,7 @@ public class giftBoxBehaviour : MonoBehaviour
                 Instantiate(collectiblePrefab, collectiblePosition, collectiblePrefab.transform.rotation);
             }
         }
-        Destroy(collision.gameObject);
+        // Destroy(collision.gameObject);
         Destroy(gameObject);
         Debug.Log("Gift box destroyed and collectibles spawned.");
     }

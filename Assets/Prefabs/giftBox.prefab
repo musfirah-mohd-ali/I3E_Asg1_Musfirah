@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 3900940447644244103}
   m_Layer: 0
   m_Name: giftBox
-  m_TagString: Untagged
+  m_TagString: giftBox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -33,7 +33,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 26.158, y: 0.6964739, z: -1.907673}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5669, y: 0.5669, z: 0.5669}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 3326
+  m_VersionIndex: 3332
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -367,7 +367,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collectiblePrefab: {fileID: 8693126573196730924, guid: 5ab585aa94f365745b530c1fdfc2dc52, type: 3}
-  giftBoxToSpawn: 1
+  giftBoxToSpawn: 2
 --- !u!65 &3900940447644244103
 BoxCollider:
   m_ObjectHideFlags: 0
