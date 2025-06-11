@@ -49,9 +49,11 @@ public class PlayerBehaviour : MonoBehaviour
             }
             else if (currentSpinKeySocket != null)
             {
-                currentSpinKeySocket.TryUseKey(); // Call the method to use the SpinKey
-                return; // Exit the method after using the SpinKey
+                Debug.Log("Trying to use SpinKey at socket...");
+                currentSpinKeySocket.TryUseKey();
+                return;
             }
+
         }
     }
     void OnCollisionEnter(Collision collision)
@@ -61,7 +63,6 @@ public class PlayerBehaviour : MonoBehaviour
         if (collision.gameObject.CompareTag("Collectible"))
         {
             score += 10;
-            health += 2;
             Debug.Log("Collected: " + collision.gameObject.name);
             Debug.Log("Score: " + score);
             Debug.Log("Health: " + health);
@@ -212,7 +213,8 @@ public class PlayerBehaviour : MonoBehaviour
     public void SetSpinKeySocket(SpinKeySocket socket)
     {
         currentSpinKeySocket = socket;
-        Debug.Log("SpinKeySocket set.");
+        Debug.Log("SpinKeySocket assigned.");
     }
+
 
 }
