@@ -15,6 +15,7 @@ TagManager:
   - DecoyHazard
   - SpinKeySocket
   - giftBox
+  - SpinKey
   layers:
   - Default
   - TransparentFX
