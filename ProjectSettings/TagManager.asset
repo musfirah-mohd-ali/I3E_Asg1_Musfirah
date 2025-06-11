@@ -16,6 +16,8 @@ TagManager:
   - SpinKeySocket
   - giftBox
   - SpinKey
+  - Activator
+  - MagneticCollectible
   layers:
   - Default
   - TransparentFX
