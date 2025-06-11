@@ -12,6 +12,7 @@ TagManager:
   - healingArea
   - hazardItems
   - Projectile
+  - Pushable
   layers:
   - Default
   - TransparentFX
