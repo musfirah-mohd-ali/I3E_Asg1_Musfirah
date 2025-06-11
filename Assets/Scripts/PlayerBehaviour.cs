@@ -48,8 +48,14 @@ public class PlayerBehaviour : MonoBehaviour
         if (collision.gameObject.CompareTag("Collectible"))
         {
             score += 10;
+            health += 2;
             Debug.Log("Collected: " + collision.gameObject.name);
             Debug.Log("Score: " + score);
+            Debug.Log("Health: " + health);
+            if (health > 100)
+            {
+                health = 100; // Cap health at 100
+            }
             Destroy(collision.gameObject);
         }
         else if (collision.gameObject.CompareTag("hazardItems"))
