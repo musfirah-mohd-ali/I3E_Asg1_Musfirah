@@ -24,6 +24,8 @@ public class PlayerBehaviour : MonoBehaviour
     AudioSource audioSource;
     [SerializeField]
     AudioClip hazardSound; // drag the hazard sound here in Inspector
+    [SerializeField]
+    AudioClip respawnSound; // drag the collectible sound here in Inspector
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -147,6 +149,10 @@ public class PlayerBehaviour : MonoBehaviour
             health = 0; // Set health to 0 to simulate death
             Debug.Log("Health: " + health);
             Debug.Log("Score: " + score);
+            if (respawnSound != null && audioSource != null)
+            // {
+            //     audioSource.PlayOneShot(respawnSound);
+            // }
             HandleDeathAndRespawn(); // For simplicity, destroy the player object
         }
         else if (other.gameObject.CompareTag("healingArea"))
@@ -202,6 +208,10 @@ public class PlayerBehaviour : MonoBehaviour
         transform.position = spawnPosition.position; // Reset player position    
         Physics.SyncTransforms(); // Ensure the physics engine updates the player's position and rotation
         Debug.Log("Respawned at: " + spawnPosition.position);
+        if (respawnSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(respawnSound);
+            }
     }
     void OnFire()
     {
