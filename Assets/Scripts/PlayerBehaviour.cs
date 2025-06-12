@@ -6,9 +6,6 @@ public class PlayerBehaviour : MonoBehaviour
     int health = 100;
     DoorBehaviour doorBehaviour;
     CollectibleBehaviour collectibleBehaviour;
-    [SerializeField]
-    AudioClip shootingSound; // The sound to play when the player fires a fireball
-    AudioSource audioSource;
     bool canInteract = false;
     public bool HasSpinKey = false;
     SpinKeySocket usingSpinKeySocket;
@@ -23,15 +20,12 @@ public class PlayerBehaviour : MonoBehaviour
     Transform spawnPoint; // The projectile prefab to be instantiated
     [SerializeField]
     float interactionDistance = 5f; // the distance at which the player can interact with objects
+    public AudioClip fireSound; // drag the fire sound here in Inspector
+    AudioSource audioSource;
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            Debug.LogError("Missing AudioSource on Player!");
-        }
     }
-
     public void ModifyScore(int amount)
     {
         // This method will be called to modify the player's score
@@ -201,11 +195,21 @@ public class PlayerBehaviour : MonoBehaviour
     }
     void OnFire()
     {
+        // Spawn the projectile
         GameObject fireball = Instantiate(projectile, spawnPoint.position, spawnPoint.rotation);
-        Vector3 fireDirection = spawnPoint.forward * fireStrength; // Get the forward direction of the spawn point
-        fireball.GetComponent<Rigidbody>().AddForce(fireDirection); // Add force to the fireball
-        audioSource.PlayOneShot(shootingSound); // Play the shooting sound
+        Vector3 fireDirection = spawnPoint.forward * fireStrength;
+        fireball.GetComponent<Rigidbody>().AddForce(fireDirection);
+        // Play the fire sound
+        if (audioSource != null && fireSound != null)
+        {
+            audioSource.PlayOneShot(fireSound);
+        }
+        else
+        {
+            Debug.LogWarning("Missing AudioSource or fireSound!");
+        }
     }
+
     void Update()
     {
         RaycastHit hitInfo;
