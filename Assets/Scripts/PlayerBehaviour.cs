@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 
+
 public class PlayerBehaviour : MonoBehaviour
 {
     int score = 0;
@@ -36,13 +37,26 @@ public class PlayerBehaviour : MonoBehaviour
     TextMeshProUGUI scoreText; // Reference to the UI Text component for displaying score
     [SerializeField]
     TextMeshProUGUI healthText; // Reference to the UI Text component for displaying health
+    [SerializeField]
+    GameObject gameCompletePanel; // Reference to the Game Complete panel
+    [SerializeField]
+    TextMeshProUGUI finalScoreText; // Reference to the Game Complete text
+    [SerializeField]
+    TextMeshProUGUI finalHealthText; // Reference to the Game Complete health text
+
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
         scoreText.text = "Score: " + score.ToString(); // Initialize the score text
         UpdateHealthText(); // Initialize the health text
+
+        if (gameCompletePanel != null)
+        {
+            gameCompletePanel.SetActive(false);  // HIDE the panel at the beginning
+        }
     }
+
     void UpdateHealthText()
     {
         healthText.text = "Health: " + health.ToString(); // Update the health text
@@ -68,6 +82,8 @@ public class PlayerBehaviour : MonoBehaviour
                     audioSource.PlayOneShot(finalDoorSound);
                     Debug.Log("🎉 Final door sound played!");
                     doorBehaviour.Interact();
+                    Debug.Log("showing the game complete panel");
+                    ShowGameCompletePanel(); // Show the Game Complete panel
                 }
                 else if (doorBehaviour.CompareTag("LockedDoor"))
                 {
@@ -121,7 +137,7 @@ public class PlayerBehaviour : MonoBehaviour
             if (health > 100)
             {
                 health = 100; // Cap health at 100
-               UpdateHealthText(); // Update the health text
+                UpdateHealthText(); // Update the health text
             }
             Destroy(collision.gameObject);
         }
@@ -202,7 +218,7 @@ public class PlayerBehaviour : MonoBehaviour
                 // }
                 HandleDeathAndRespawn(); // For simplicity, destroy the player object
         }
-        
+
         else if (other.CompareTag("SpinKeySocket"))
         {
             SpinKeySocket socket = other.GetComponent<SpinKeySocket>();
@@ -331,5 +347,14 @@ public class PlayerBehaviour : MonoBehaviour
     {
         usingSpinKeySocket = socket; // Set the current SpinKeySocket
         //Debug.Log("SpinKeySocket set.");
+    }
+    void ShowGameCompletePanel()
+    {
+        if (gameCompletePanel != null)
+        {
+            gameCompletePanel.SetActive(true);
+            finalScoreText.text = "Final Score: " + score;
+            finalHealthText.text = "Final Health: " + health;
+        }
     }
 }
