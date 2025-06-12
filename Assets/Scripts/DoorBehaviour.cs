@@ -4,6 +4,7 @@ public class DoorBehaviour : MonoBehaviour
 {
     private bool isOpen = false;
     public bool isFinalDoor = false;
+
     public void Interact()
     {
         Vector3 doorRotation = transform.eulerAngles;

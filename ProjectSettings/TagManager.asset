@@ -19,6 +19,8 @@ TagManager:
   - TeleportPortal
   - Pushable
   - FinalDoor
+  - LockedKey
+  - LockedDoor
   layers:
   - Default
   - TransparentFX
