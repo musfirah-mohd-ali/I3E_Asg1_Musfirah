@@ -88,6 +88,10 @@ public class PlayerBehaviour : MonoBehaviour
             Debug.Log("Health: " + health);
             Debug.Log("Score: " + score);
             Destroy(collision.gameObject); // Destroy the hazard item
+            if (hazardSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(hazardSound);
+            }
             if (score <= 0)
             {
                 score = 0; // Ensure score doesn't go negative
