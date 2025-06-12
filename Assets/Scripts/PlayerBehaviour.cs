@@ -6,9 +6,12 @@ public class PlayerBehaviour : MonoBehaviour
     int health = 100;
     DoorBehaviour doorBehaviour;
     CollectibleBehaviour collectibleBehaviour;
+    [SerializeField]
+    AudioClip shootingSound; // The sound to play when the player fires a fireball
+    AudioSource audioSource;
     bool canInteract = false;
     public bool HasSpinKey = false;
-    SpinKeySocket currentSpinKeySocket;
+    SpinKeySocket usingSpinKeySocket;
 
     [SerializeField]
     GameObject projectile; // The projectile prefab to be instantiated
@@ -20,6 +23,15 @@ public class PlayerBehaviour : MonoBehaviour
     Transform spawnPoint; // The projectile prefab to be instantiated
     [SerializeField]
     float interactionDistance = 5f; // the distance at which the player can interact with objects
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            Debug.LogError("Missing AudioSource on Player!");
+        }
+    }
+
     public void ModifyScore(int amount)
     {
         // This method will be called to modify the player's score
@@ -47,11 +59,11 @@ public class PlayerBehaviour : MonoBehaviour
                     Debug.Log("SpinKey collected! HasSpinKey: " + HasSpinKey);
                 }
             }
-            else if (currentSpinKeySocket != null)
+            else if (usingSpinKeySocket != null)
             {
-                Debug.Log("Trying to use SpinKey at socket...");
-                currentSpinKeySocket.TryUseKey();
-                return;
+                Debug.Log("try use key");
+                usingSpinKeySocket.TryUseKey(); // Call the method to use the SpinKey
+                return; // Exit the method after using the SpinKey
             }
 
         }
@@ -106,7 +118,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("giftBox"))
         {
-            Debug.Log("Touched a gift box. No damage taken.");
+            Debug.Log("Touched a gift box.  damage taken.");
         }
 
 
@@ -163,6 +175,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if(other.CompareTag("SpinKeySocket"))
         {
+            Debug.Log("trying to use SpinKeySocket");
             SpinKeySocket socket = other.GetComponent<SpinKeySocket>();
             if (socket != null)
             {
@@ -172,9 +185,9 @@ public class PlayerBehaviour : MonoBehaviour
     }
     void ClearSpinKeySocket(SpinKeySocket socket)
     {
-        if (currentSpinKeySocket == socket)
+        if (usingSpinKeySocket == socket)
         {
-            currentSpinKeySocket = null; // Clear the current SpinKeySocket
+            usingSpinKeySocket = null; // Clear the current SpinKeySocket
             Debug.Log("SpinKeySocket cleared.");
         }
     }
@@ -191,6 +204,7 @@ public class PlayerBehaviour : MonoBehaviour
         GameObject fireball = Instantiate(projectile, spawnPoint.position, spawnPoint.rotation);
         Vector3 fireDirection = spawnPoint.forward * fireStrength; // Get the forward direction of the spawn point
         fireball.GetComponent<Rigidbody>().AddForce(fireDirection); // Add force to the fireball
+        audioSource.PlayOneShot(shootingSound); // Play the shooting sound
     }
     void Update()
     {
@@ -208,13 +222,21 @@ public class PlayerBehaviour : MonoBehaviour
                 doorBehaviour = hitInfo.collider.GetComponent<DoorBehaviour>();
                 canInteract = true;
             }
+            else if (hitInfo.collider.CompareTag("SpinKeySocket"))
+            {
+                SpinKeySocket socket = hitInfo.collider.GetComponent<SpinKeySocket>();
+                if (socket != null)
+                {
+                    SetSpinKeySocket(socket); // Set the current SpinKeySocket
+                    canInteract = true;
+                }
+            }
         }
     }
     public void SetSpinKeySocket(SpinKeySocket socket)
     {
-        currentSpinKeySocket = socket;
-        Debug.Log("SpinKeySocket assigned.");
+        usingSpinKeySocket = socket;
+        Debug.Log("SpinKeySocket set.");
     }
-
 
 }
