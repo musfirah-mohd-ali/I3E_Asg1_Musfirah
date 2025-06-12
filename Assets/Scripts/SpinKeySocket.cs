@@ -4,14 +4,12 @@ public class SpinKeySocket : MonoBehaviour
 {
     public SpinTrap spinTrap;  // Assign SpinTrap in inspector
 
-    bool playerNearby = false;
     PlayerBehaviour player;
 
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            playerNearby = true;
             player = other.GetComponent<PlayerBehaviour>();
         }
     }
@@ -20,7 +18,6 @@ public class SpinKeySocket : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            playerNearby = false;
             player = null;
         }
     }
@@ -28,7 +25,7 @@ public class SpinKeySocket : MonoBehaviour
     // Call this when player presses interact (E)
     public void TryUseKey()
     {
-        if (playerNearby && player.HasSpinKey)
+        if (player.HasSpinKey)
         {
             spinTrap.StopSpinning();
             player.HasSpinKey = false;

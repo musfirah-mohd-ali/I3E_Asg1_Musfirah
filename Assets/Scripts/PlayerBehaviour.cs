@@ -28,6 +28,9 @@ public class PlayerBehaviour : MonoBehaviour
     AudioClip respawnSound; // drag the collectible sound here in Inspector
     [SerializeField]
     AudioClip collectibleSound; // drag the collectible sound here in Inspector
+    [SerializeField]
+    AudioClip finalDoorSound;
+    bool hasExitDoor = false; // Flag to check if the exit door has been opened
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -187,16 +190,12 @@ public class PlayerBehaviour : MonoBehaviour
         }
 
     }
-    void OnTriggerExit(Collider other)
+    void OnTriggerStay(Collider other)
     {
         if(other.CompareTag("SpinKeySocket"))
         {
-            Debug.Log("trying to use SpinKeySocket");
-            SpinKeySocket socket = other.GetComponent<SpinKeySocket>();
-            if (socket != null)
-            {
-                ClearSpinKeySocket(socket); // Clear the current SpinKeySocket
-            }
+            //Debug.Log("trying to use SpinKeySocket");
+            usingSpinKeySocket = other.GetComponent<SpinKeySocket>();
         }
     }
     void ClearSpinKeySocket(SpinKeySocket socket)
@@ -262,11 +261,17 @@ public class PlayerBehaviour : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            collectibleBehaviour = null; // Clear the collectibleBehaviour if no collectible is hit
+            doorBehaviour = null; // Clear the doorBehaviour if no door is hit
+            canInteract = false; // Set canInteract to false if nothing is hit
+        }
     }
     public void SetSpinKeySocket(SpinKeySocket socket)
     {
-        usingSpinKeySocket = socket;
-        Debug.Log("SpinKeySocket set.");
+        usingSpinKeySocket = socket; // Set the current SpinKeySocket
+        //Debug.Log("SpinKeySocket set.");
     }
 
 }
