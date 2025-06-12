@@ -22,6 +22,7 @@ public class PlayerBehaviour : MonoBehaviour
     float interactionDistance = 5f; // the distance at which the player can interact with objects
     public AudioClip fireSound; // drag the fire sound here in Inspector
     AudioSource audioSource;
+
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
