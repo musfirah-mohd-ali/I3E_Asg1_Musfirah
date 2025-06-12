@@ -26,6 +26,8 @@ public class PlayerBehaviour : MonoBehaviour
     AudioClip hazardSound; // drag the hazard sound here in Inspector
     [SerializeField]
     AudioClip respawnSound; // drag the collectible sound here in Inspector
+    [SerializeField]
+    AudioClip collectibleSound; // drag the collectible sound here in Inspector
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -76,6 +78,10 @@ public class PlayerBehaviour : MonoBehaviour
             Debug.Log("Collected: " + collision.gameObject.name);
             Debug.Log("Score: " + score);
             Debug.Log("Health: " + health);
+            if (collectibleSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(collectibleSound);
+            }
             if (health > 100)
             {
                 health = 100; // Cap health at 100
@@ -150,9 +156,9 @@ public class PlayerBehaviour : MonoBehaviour
             Debug.Log("Health: " + health);
             Debug.Log("Score: " + score);
             if (respawnSound != null && audioSource != null)
-            // {
-            //     audioSource.PlayOneShot(respawnSound);
-            // }
+                // {
+                //     audioSource.PlayOneShot(respawnSound);
+                // }
             HandleDeathAndRespawn(); // For simplicity, destroy the player object
         }
         else if (other.gameObject.CompareTag("healingArea"))
