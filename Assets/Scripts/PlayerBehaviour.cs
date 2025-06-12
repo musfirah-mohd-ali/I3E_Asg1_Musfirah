@@ -29,8 +29,7 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField]
     AudioClip collectibleSound; // drag the collectible sound here in Inspector
     [SerializeField]
-    AudioClip finalDoorSound;
-    bool hasExitDoor = false; // Flag to check if the exit door has been opened
+    AudioClip finalDoorSound; 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -49,10 +48,17 @@ public class PlayerBehaviour : MonoBehaviour
         {
             if (doorBehaviour != null)
             {
-                Debug.Log("Interacting with door: " + gameObject.name);
-                // Call the Interact method on the doorBehaviour component
+                Debug.Log("Interacting with door: " + doorBehaviour.gameObject.name);
+
+                if (doorBehaviour.isFinalDoor && finalDoorSound != null && audioSource != null)
+                {
+                    audioSource.PlayOneShot(finalDoorSound);
+                    Debug.Log("🎉 Final door sound played!");
+                }
+
                 doorBehaviour.Interact();
             }
+
             else if (collectibleBehaviour != null)
             {
                 collectibleBehaviour.Collect(this);
@@ -250,6 +256,12 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 doorBehaviour = hitInfo.collider.GetComponent<DoorBehaviour>();
                 canInteract = true;
+            }
+            else if (hitInfo.collider.CompareTag("FinalDoor"))
+            {
+                doorBehaviour = hitInfo.collider.GetComponent<DoorBehaviour>();
+                canInteract = true;
+                doorBehaviour.isFinalDoor = true; // Set the door as the final door
             }
             else if (hitInfo.collider.CompareTag("SpinKeySocket"))
             {
