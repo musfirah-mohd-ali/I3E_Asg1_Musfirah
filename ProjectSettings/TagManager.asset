@@ -18,6 +18,7 @@ TagManager:
   - SpinKey
   - TeleportPortal
   - Pushable
+  - FinalDoor
   layers:
   - Default
   - TransparentFX
