@@ -22,7 +22,8 @@ public class PlayerBehaviour : MonoBehaviour
     float interactionDistance = 5f; // the distance at which the player can interact with objects
     public AudioClip fireSound; // drag the fire sound here in Inspector
     AudioSource audioSource;
-
+    [SerializeField]
+    AudioClip hazardSound; // drag the hazard sound here in Inspector
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -99,6 +100,10 @@ public class PlayerBehaviour : MonoBehaviour
             Debug.Log("Hit a hazard: " + gameObject.name);
             health -= 10;
             Debug.Log("Health: " + health);
+            if (hazardSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(hazardSound);
+            }
             if (score <= 0)
             {
                 score = 0; // Ensure score doesn't go negative
