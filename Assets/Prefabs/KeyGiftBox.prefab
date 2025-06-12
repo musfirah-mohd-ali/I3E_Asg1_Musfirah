@@ -365,6 +365,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063412d9eb148ef4bab32ab49b0ff85d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LockedKeyPrefab: {fileID: 0}
+  LockedKeyPrefab: {fileID: 823347029269402394, guid: 0e395ec490da65246bd5d04ca6aaf826, type: 3}
   explosionSound: {fileID: 8300000, guid: 4b6bea08de2364744b3ea00600d3f4b5, type: 3}
   keyboxToSpawn: 1
