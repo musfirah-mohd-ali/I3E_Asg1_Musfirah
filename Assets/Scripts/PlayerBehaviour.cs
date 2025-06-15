@@ -1,76 +1,94 @@
+/*
+* Author: Musfirah
+* Date: 15/06/2025
+* Description: Handles player interactions such as collecting items, using keys, interacting with doors and hazards, firing projectiles, and managing UI and audio feedback in a Unity environment.
+*/
+
 using UnityEngine;
 using TMPro;
 
-
+/// <summary>
+/// Manages player behavior, including interactions, scoring, health, audio, and UI updates.
+/// </summary>
 public class PlayerBehaviour : MonoBehaviour
 {
+    // Score and health tracking
     int score = 0;
     int health = 100;
+
+    // References to interactable components
     DoorBehaviour doorBehaviour;
     CollectibleBehaviour collectibleBehaviour;
     bool canInteract = false;
+
+    /// <summary>Indicates whether the player has collected the SpinKey.</summary>
     public bool HasSpinKey = false;
+
     SpinKeySocket usingSpinKeySocket;
 
-    [SerializeField]
-    GameObject projectile; // The projectile prefab to be instantiated
-    [SerializeField]
-    float fireStrength = 1000f; // The strength of the fireball
-    [SerializeField]
-    Transform spawnPosition; // The position where the player will spawn
-    [SerializeField]
-    Transform spawnPoint; // The projectile prefab to be instantiated
-    [SerializeField]
-    float interactionDistance = 5f; // the distance at which the player can interact with objects
-    public AudioClip fireSound; // drag the fire sound here in Inspector
+    // Projectile and interaction settings
+    [SerializeField] GameObject projectile;
+    [SerializeField] float fireStrength = 1000f;
+    [SerializeField] Transform spawnPosition;
+    [SerializeField] Transform spawnPoint;
+    [SerializeField] float interactionDistance = 5f;
+
+    // Audio references
+    public AudioClip fireSound;
     AudioSource audioSource;
-    [SerializeField]
-    AudioClip hazardSound; // drag the hazard sound here in Inspector
-    [SerializeField]
-    AudioClip respawnSound; // drag the collectible sound here in Inspector
-    [SerializeField]
-    AudioClip collectibleSound; // drag the collectible sound here in Inspector
-    [SerializeField]
-    AudioClip finalDoorSound;
+    [SerializeField] AudioClip hazardSound;
+    [SerializeField] AudioClip respawnSound;
+    [SerializeField] AudioClip collectibleSound;
+    [SerializeField] AudioClip finalDoorSound;
+
+    /// <summary>Indicates whether the player has collected the LockedKey.</summary>
     public bool HasLockedKey = false;
-    [SerializeField]
-    TextMeshProUGUI scoreText; // Reference to the UI Text component for displaying score
-    [SerializeField]
-    TextMeshProUGUI healthText; // Reference to the UI Text component for displaying health
-    [SerializeField]
-    GameObject gameCompletePanel; // Reference to the Game Complete panel
-    [SerializeField]
-    TextMeshProUGUI finalScoreText; // Reference to the Game Complete text
-    [SerializeField]
-    TextMeshProUGUI finalHealthText; // Reference to the Game Complete health text
 
+    // UI references
+    [SerializeField] TextMeshProUGUI scoreText;
+    [SerializeField] TextMeshProUGUI healthText;
+    [SerializeField] GameObject gameCompletePanel;
+    [SerializeField] TextMeshProUGUI finalScoreText;
+    [SerializeField] TextMeshProUGUI finalHealthText;
 
+    /// <summary>
+    /// Initializes score, health, audio, and UI elements.
+    /// </summary>
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        scoreText.text = "Score: " + score.ToString(); // Initialize the score text
-        UpdateHealthText(); // Initialize the health text
+        scoreText.text = "Score: " + score;
+        UpdateHealthText();
 
         if (gameCompletePanel != null)
-        {
-            gameCompletePanel.SetActive(false);  // HIDE the panel at the beginning
-        }
+            gameCompletePanel.SetActive(false);
     }
 
+    /// <summary>
+    /// Updates the UI with the current health value.
+    /// </summary>
     void UpdateHealthText()
     {
-        healthText.text = "Health: " + health.ToString(); // Update the health text
+        healthText.text = "Health: " + health.ToString();
     }
+
+    /// <summary>
+    /// Modifies the player's score and updates the score UI.
+    /// </summary>
+    /// <param name="amount">Amount to add to the score (can be negative).</param>
     public void ModifyScore(int amount)
     {
-        // This method will be called to modify the player's score
         score += amount;
-        scoreText.text = "Score: " + score.ToString(); // Update the score text
+        scoreText.text = "Score: " + score.ToString();
     }
+
+    /// <summary>
+    /// Handles interactions with doors, collectibles, or key sockets.
+    /// </summary>
     void OnInteract()
     {
-        // This method will be called when the player interacts with an object
         Debug.Log("Player interacted " + gameObject.name);
+
         if (canInteract)
         {
             if (doorBehaviour != null)
@@ -82,221 +100,171 @@ public class PlayerBehaviour : MonoBehaviour
                     audioSource.PlayOneShot(finalDoorSound);
                     Debug.Log("🎉 Final door sound played!");
                     doorBehaviour.Interact();
-                    Debug.Log("showing the game complete panel");
-                    ShowGameCompletePanel(); // Show the Game Complete panel
+                    ShowGameCompletePanel();
                 }
-                else if (doorBehaviour.CompareTag("LockedDoor"))
+                else if (doorBehaviour.CompareTag("LockedDoor") && HasLockedKey)
                 {
-                    if (HasLockedKey)
-                    {
-                        Debug.Log("Interacting with LockedDoor: " + doorBehaviour.gameObject.name);
-                        // Check if the door requires a LockedKey
-                        if (doorBehaviour != null)
-                        {
-                            doorBehaviour.Interact(); // Allow interaction only if the door requires a LockedKey
-                        }
-                    }
+                    doorBehaviour.Interact();
                 }
                 else
                 {
                     doorBehaviour.Interact();
                 }
             }
-
             else if (collectibleBehaviour != null)
             {
                 collectibleBehaviour.Collect(this);
                 if (collectibleBehaviour.gameObject.name == "SpinKey")
                 {
-                    HasSpinKey = true; // Set the flag to true if the collectible is a SpinKey
+                    HasSpinKey = true;
                     Debug.Log("SpinKey collected! HasSpinKey: " + HasSpinKey);
                 }
             }
             else if (usingSpinKeySocket != null)
             {
-                Debug.Log("try use key");
-                usingSpinKeySocket.TryUseKey(); // Call the method to use the SpinKey
-                return; // Exit the method after using the SpinKey
+                usingSpinKeySocket.TryUseKey();
+                return;
             }
         }
     }
+
+    /// <summary>
+    /// Called when the player collides with physical objects.
+    /// </summary>
+    /// <param name="collision">Collision data.</param>
     void OnCollisionEnter(Collision collision)
     {
-        // This method will be called when the player collides with another object
-        // Debug.Log("Player collided with " + collision.gameObject.name);
         if (collision.gameObject.CompareTag("Collectible"))
         {
-            ModifyScore(10); ;
-            Debug.Log("Collected: " + collision.gameObject.name);
-            // Debug.Log("Score: " + score);
-            // Debug.Log("Health: " + health);
+            ModifyScore(10);
             if (collectibleSound != null && audioSource != null)
-            {
                 audioSource.PlayOneShot(collectibleSound);
-            }
-            if (health > 100)
-            {
-                health = 100; // Cap health at 100
-                UpdateHealthText(); // Update the health text
-            }
+            if (health > 100) health = 100;
+            UpdateHealthText();
             Destroy(collision.gameObject);
         }
         else if (collision.gameObject.CompareTag("hazardItems"))
         {
-            ModifyScore(-5); // Decrease score by 5 for hitting a hazard item
-            Debug.Log("Hit a hazard item: " + collision.gameObject.name);
+            ModifyScore(-5);
             health -= 10;
-            UpdateHealthText(); // Update the health text
-            Debug.Log("Health: " + health);
-            Debug.Log("Score: " + score);
-            Destroy(collision.gameObject); // Destroy the hazard item
+            UpdateHealthText();
+            Destroy(collision.gameObject);
             if (hazardSound != null && audioSource != null)
-            {
                 audioSource.PlayOneShot(hazardSound);
-            }
             if (health <= 0)
-            {
-                health = 0; // Ensure score doesn't go negative
-                UpdateHealthText(); // Update the health text
-                HandleDeathAndRespawn(); // Handle player death (e.g., respawn, game over)
-            }
+                HandleDeathAndRespawn();
         }
         else if (collision.gameObject.CompareTag("Hazard"))
         {
             score -= 5;
-            Debug.Log("Hit a hazard: " + gameObject.name);
             health -= 10;
-            UpdateHealthText(); // Update the health text
-            Debug.Log("Health: " + health);
+            UpdateHealthText();
             if (hazardSound != null && audioSource != null)
-            {
                 audioSource.PlayOneShot(hazardSound);
-            }
-            if (score <= 0)
-            {
-                score = 0; // Ensure score doesn't go negative
-            }
+            if (score <= 0) score = 0;
             if (health <= 0)
-            {
-                Debug.Log("Player is dead.");
                 HandleDeathAndRespawn();
-                // Handle player death (e.g., respawn, game over)
-                // For simplicity, destroy the player object
-            }
         }
-        else if (collision.gameObject.CompareTag("giftBox"))
-        {
-            Debug.Log("Touched a gift box.  damage taken.");
-        }
-
-
     }
+
+    /// <summary>
+    /// Triggered when the player enters a trigger collider.
+    /// </summary>
+    /// <param name="other">The collider the player entered.</param>
     void OnTriggerEnter(Collider other)
     {
-        // This method will be called when the player enters a trigger collider
-        // Debug.Log(other.gameObject.name + " entered trigger");
         if (other.gameObject.CompareTag("Collectible"))
         {
-            collectibleBehaviour = other.gameObject.GetComponent<CollectibleBehaviour>();
+            collectibleBehaviour = other.GetComponent<CollectibleBehaviour>();
             canInteract = true;
         }
         else if (other.gameObject.CompareTag("Door"))
         {
-            doorBehaviour = other.gameObject.GetComponent<DoorBehaviour>();
+            doorBehaviour = other.GetComponent<DoorBehaviour>();
             canInteract = true;
         }
         else if (other.gameObject.CompareTag("Killer"))
         {
-            Debug.Log("Player hit a killer object: " + gameObject.name);
-            health = 0; // Set health to 0 to simulate death
-            UpdateHealthText(); // Update the health text
-            Debug.Log("Health: " + health);
-            Debug.Log("Score: " + score);
-            if (respawnSound != null && audioSource != null)
-                // {
-                //     audioSource.PlayOneShot(respawnSound);
-                // }
-                HandleDeathAndRespawn(); // For simplicity, destroy the player object
+            health = 0;
+            UpdateHealthText();
+            HandleDeathAndRespawn();
         }
-
         else if (other.CompareTag("SpinKeySocket"))
         {
             SpinKeySocket socket = other.GetComponent<SpinKeySocket>();
-            if (socket != null)
-            {
-                SetSpinKeySocket(socket); // Set the current SpinKeySocket
-            }
+            if (socket != null) SetSpinKeySocket(socket);
         }
         else if (other.gameObject.CompareTag("SpinKey"))
         {
             HasSpinKey = true;
-            Debug.Log("Collected SpinKey! HasSpinKey: " + HasSpinKey);
             Destroy(other.gameObject);
         }
         else if (other.gameObject.CompareTag("LockedKey"))
         {
             HasLockedKey = true;
-            Debug.Log("Collected LockedKey! HasLockedKey: " + HasLockedKey);
             Destroy(other.gameObject);
         }
     }
+
+    /// <summary>
+    /// Triggered while staying inside a trigger collider.
+    /// </summary>
+    /// <param name="other">The collider the player is inside.</param>
     void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("SpinKeySocket"))
         {
-            //Debug.Log("trying to use SpinKeySocket");
             usingSpinKeySocket = other.GetComponent<SpinKeySocket>();
         }
         else if (other.gameObject.CompareTag("healingArea"))
         {
             health += 3;
-            UpdateHealthText(); // Update the health text
-            Debug.Log("Player entered healing area. Health: " + health);
-            if (health >= 100)
-            {
-                health = 100; // Cap health at 100
-                UpdateHealthText(); // Update the health text
-                // Debug.Log("Player healed. Health: " + health);
-            }
+            if (health >= 100) health = 100;
+            UpdateHealthText();
         }
     }
+
+    /// <summary>
+    /// Clears the current SpinKeySocket if it matches the provided socket.
+    /// </summary>
+    /// <param name="socket">The SpinKeySocket to clear.</param>
     void ClearSpinKeySocket(SpinKeySocket socket)
     {
         if (usingSpinKeySocket == socket)
         {
-            usingSpinKeySocket = null; // Clear the current SpinKeySocket
+            usingSpinKeySocket = null;
             Debug.Log("SpinKeySocket cleared.");
         }
     }
+
+    /// <summary>
+    /// Handles player death and respawning at the spawn position.
+    /// </summary>
     void HandleDeathAndRespawn()
     {
         health = 100;
         score = 0;
-        transform.position = spawnPosition.position; // Reset player position    
-        Physics.SyncTransforms(); // Ensure the physics engine updates the player's position and rotation
-        Debug.Log("Respawned at: " + spawnPosition.position);
+        transform.position = spawnPosition.position;
+        Physics.SyncTransforms();
         if (respawnSound != null && audioSource != null)
-        {
             audioSource.PlayOneShot(respawnSound);
-        }
     }
+
+    /// <summary>
+    /// Fires a projectile in the forward direction.
+    /// </summary>
     void OnFire()
     {
-        // Spawn the projectile
         GameObject fireball = Instantiate(projectile, spawnPoint.position, spawnPoint.rotation);
         Vector3 fireDirection = spawnPoint.forward * fireStrength;
         fireball.GetComponent<Rigidbody>().AddForce(fireDirection);
-        // Play the fire sound
         if (audioSource != null && fireSound != null)
-        {
             audioSource.PlayOneShot(fireSound);
-        }
-        else
-        {
-            Debug.LogWarning("Missing AudioSource or fireSound!");
-        }
     }
 
+    /// <summary>
+    /// Updates interaction detection and raycasting every frame.
+    /// </summary>
     void Update()
     {
         RaycastHit hitInfo;
@@ -317,37 +285,42 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 doorBehaviour = hitInfo.collider.GetComponent<DoorBehaviour>();
                 canInteract = true;
-                doorBehaviour.isFinalDoor = true; // Set the door as the final door
+                doorBehaviour.isFinalDoor = true;
             }
             else if (hitInfo.collider.CompareTag("LockedDoor"))
             {
                 doorBehaviour = hitInfo.collider.GetComponent<DoorBehaviour>();
             }
-
             else if (hitInfo.collider.CompareTag("SpinKeySocket"))
             {
                 SpinKeySocket socket = hitInfo.collider.GetComponent<SpinKeySocket>();
                 if (socket != null)
                 {
-                    SetSpinKeySocket(socket); // Set the current SpinKeySocket
+                    SetSpinKeySocket(socket);
                     canInteract = true;
                 }
             }
         }
-
         else
         {
-            collectibleBehaviour = null; // Clear the collectibleBehaviour if no collectible is hit
-            doorBehaviour = null; // Clear the doorBehaviour if no door is hit
-            canInteract = false; // Set canInteract to false if nothing is hit
+            collectibleBehaviour = null;
+            doorBehaviour = null;
+            canInteract = false;
         }
     }
 
+    /// <summary>
+    /// Sets the current SpinKeySocket to be used.
+    /// </summary>
+    /// <param name="socket">The SpinKeySocket to set.</param>
     public void SetSpinKeySocket(SpinKeySocket socket)
     {
-        usingSpinKeySocket = socket; // Set the current SpinKeySocket
-        //Debug.Log("SpinKeySocket set.");
+        usingSpinKeySocket = socket;
     }
+
+    /// <summary>
+    /// Displays the game complete panel and shows final stats.
+    /// </summary>
     void ShowGameCompletePanel()
     {
         if (gameCompletePanel != null)
