@@ -17,6 +17,13 @@ In this game, the player can interact with multiple things like doors, fire bull
     * Gift Boxes spawn collectibles or keys when destroyed by projectiles.
     * False gift boxes spawn fake collectible as traps.
 
+## Requirements
+* Platform: Unity 2021.3 LTS or later (recommended)
+* Supported OS: Windows, macOS
+* Hardware: Standard PC/Mac with graphics support for Unity 3D
+* Unity Editor: Open the provided Unity project folder and press Play in the editor.
+* Build: Can be built as a standalone executable for Windows/macOS using Unity’s Build Settings.
+
 ## Controls
 * Movement
     * WASD
@@ -42,5 +49,15 @@ In this game, the player can interact with multiple things like doors, fire bull
 * User interface is basic and may need enhancement for usability.
 
 ## Audio
-* All audios came from https://freesound.org/
+#### All audios came from https://freesound.org/
+* Audios from interaction
+    * Bullet.wav. (n.d.). Freesound. https://freesound.org/people/Anuj_Shrestha1/sounds/440136/
+    * Je_AntExplode.wav. (n.d.). Freesound. https://freesound.org/people/cmusounddesign/sounds/71893/
+    * PlayerHurt1. (n.d.). Freesound. https://freesound.org/people/mrickey13/sounds/515623/
+    * Portal_Spawn. (n.d.). Freesound. https://freesound.org/people/BaggoNotes/sounds/720110/
+    * PickupSFX.wav. (n.d.). Freesound. https://freesound.org/people/ajanhallinta/sounds/650943/
+
+* Audio for BGM
+    * 슈슈보보 shushubobo. (2024, October 11). [no copyright music] “soho cat” background music [Video]. YouTube. https://www.youtube.com/watch?v=80L2EWOCaT4
+
 
